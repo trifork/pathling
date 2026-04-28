@@ -36,6 +36,9 @@
     <pathling.fhirServerDockerTag>latest</pathling.fhirServerDockerTag>
     <pathling.dockerBaseImage>amazoncorretto:21</pathling.dockerBaseImage>
     <pathling.awsSdkVersion>2.40.3</pathling.awsSdkVersion>
+    <pathling.azureStorageVersion>7.0.1</pathling.azureStorageVersion>
+    <pathling.azureIdentityVersion>1.13.3</pathling.azureIdentityVersion>
+    <pathling.wildflyOpensslVersion>1.1.3.Final</pathling.wildflyOpensslVersion>
     <pathling.bulkExportVersion>1.0.4</pathling.bulkExportVersion>
     <pathling.fhirAuthVersion>1.0.0</pathling.fhirAuthVersion>
   </properties>
@@ -147,6 +150,28 @@
       <groupId>software.amazon.awssdk</groupId>
       <artifactId>bundle</artifactId>
       <version>${pathling.awsSdkVersion}</version>
+    </dependency>
+
+    <!-- Azure Storage (ABFS / WASB driver for Hadoop) -->
+    <dependency>
+      <groupId>org.apache.hadoop</groupId>
+      <artifactId>hadoop-azure</artifactId>
+      <version>${pathling.hadoopVersion}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.microsoft.azure</groupId>
+      <artifactId>azure-storage</artifactId>
+      <version>${pathling.azureStorageVersion}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.wildfly.openssl</groupId>
+      <artifactId>wildfly-openssl</artifactId>
+      <version>${pathling.wildflyOpensslVersion}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.azure</groupId>
+      <artifactId>azure-identity</artifactId>
+      <version>${pathling.azureIdentityVersion}</version>
     </dependency>
     <dependency>
       <groupId>io.delta</groupId>

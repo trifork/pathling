@@ -36,7 +36,7 @@ jobs:
         with:
           scan-ref: server
           trivyignore: server/.trivyignore
-          skip-db-update: "true"
+          skip-db-update: "false"
           sarif-output: trivy-results-server.sarif
 
       - name: Run UI security scan
@@ -44,7 +44,7 @@ jobs:
         with:
           scan-ref: ui
           trivyignore: ui/.trivyignore
-          skip-db-update: "true"
+          skip-db-update: "false"
           sarif-output: trivy-results-ui.sarif
 
       - name: Log in to GHCR

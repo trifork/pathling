@@ -36,6 +36,21 @@ jobs:
           java: "true"
           bun: "true"
 
+      - name: Build server artifacts (no Jib)
+        working-directory: server
+        run: |
+          mvn --batch-mode package -DskipTests -DskipITs
+          mvn --batch-mode dependency:copy-dependencies \
+            -DincludeScope=runtime \
+            -DoutputDirectory=target/dependency
+        timeout-minutes: 60
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Log in to GHCR
         uses: docker/login-action@v3
         with:
@@ -43,11 +58,13 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push Docker image
-        working-directory: server
-        run: |
-          mvn --batch-mode deploy -Pdocker -Dmaven.deploy.skip \
-            -DskipTests -DskipITs \
-            -Dpathling.fhirServerDockerRepo=ghcr.io/${{ github.repository_owner }}/pathling \
-            -Dpathling.fhirServerDockerTag=${{ inputs.image-tag || 'azure-mi-v1' }}
-        timeout-minutes: 60
+      - name: Build and push multi-arch Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: server
+          file: server/Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/pathling:${{ inputs.image-tag || 'azure-mi-v1' }}
+          provenance: false

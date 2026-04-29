@@ -1,0 +1,53 @@
+# Builds and pushes a Docker image of the server module to the fork's GHCR
+# namespace, tagged with a custom tag. Skips Trivy and Sonar.
+
+name: Server Azure-MI image
+
+on:
+  workflow_dispatch:
+    inputs:
+      image-tag:
+        description: "Tag for the published image"
+        required: true
+        default: "azure-mi-v1"
+  push:
+    branches:
+      - "feat/azure-workload-identity"
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-and-push:
+    name: Build and push Docker image
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Set up build environment
+        uses: ./.github/actions/setup-build-tools
+        with:
+          java: "true"
+          bun: "true"
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        working-directory: server
+        run: |
+          mvn --batch-mode deploy -Pdocker -Dmaven.deploy.skip \
+            -DskipTests -DskipITs \
+            -Dpathling.fhirServerDockerRepo=ghcr.io/${{ github.repository_owner }}/pathling \
+            -Dpathling.fhirServerDockerTag=${{ inputs.image-tag || 'azure-mi-v1' }}
+        timeout-minutes: 60

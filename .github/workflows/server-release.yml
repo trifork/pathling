@@ -37,6 +37,7 @@ jobs:
         uses: ./.github/actions/trivy-scan
         with:
           scan-ref: server
+          skip-db-update: "true"
           trivyignore: server/.trivyignore
           sarif-output: trivy-results-server.sarif
 
@@ -44,6 +45,7 @@ jobs:
         uses: ./.github/actions/trivy-scan
         with:
           scan-ref: ui
+          skip-db-update: "true"
           trivyignore: ui/.trivyignore
           sarif-output: trivy-results-ui.sarif
 
